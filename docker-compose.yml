@@ -1,0 +1,33 @@
+version: '3'
+services:
+  ypunto-proxy:
+    image: ypunto/nginx-proxy
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+      - "./nginx-custom.conf:/etc/nginx/conf.d/custom-settings.conf"
+    ports:
+      - "80:80"
+    restart: 'always'
+    networks:
+      - default
+      - proxy
+
+  portainer:
+    image: portainer/portainer
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "portainer_data:/data"
+    restart: 'always'
+
+volumes:
+  portainer_data:
+    external:
+      name: portainer_data
+
+networks:
+  proxy:
+    external:
+      name: nginx-proxy
